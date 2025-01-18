@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PassaBot</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #003b80, #0072c3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            color: #fff;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            display: block;
+            width: 100px;
+            height: auto;
+        }
+
+        .title {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .button {
+            text-align: center;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background-color: #00b300;
+        }
+
+        .button:hover {
+            transform: scale(1.05);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:nth-child(1) {
+            background-color: #007f00;
+        }
+
+        .button:nth-child(2) {
+            background-color: #00b300;
+        }
+
+        .button:nth-child(3) {
+            background-color: #ff5c5c;
+            position: relative;
+        }
+
+        .button:nth-child(3) small {
+            display: block;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            color: #fff;
+        }
+
+        .button:nth-child(4) {
+            background-color: #ff9933;
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <img src="logo.png" alt="PassaBot Logo">
+    </div>
+    <div class="title">PASSABOT</div>
+    <div class="button-container">
+        <a href="https://wa.me/5511944626696" class="button">Comprar Passagens ✈️</a>
+        <a href="passabot.com" class="button">Nosso Site 💚</a>
+        <a href="https://chat.whatsapp.com/GsddcdAqx1WCAYjQXLAr5Q" class="button">Grupo de Alertas 🚨<small>Passagens baratas saindo de <b>São Paulo</b></small></a>
+        <a href="https://wa.me/5587988574866" class="button">Falar com Assessor 🗓️</a>
+    </div>
+</body>
+</html>
