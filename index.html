@@ -3,97 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PassaBot</title>
+    <title>PassaBot - Viagens Pelo Mundo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --primary-color: #003b80;
+            --accent-color: #00b300;
+            --red-color: #ff5c5c;
+            --orange-color: #ff9933;
+            --text-color: #ffffff;
+        }
+
+        * {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to bottom, #003b80, #0072c3);
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            background-color: var(--primary-color);
+        }
+
+        /* Fundo com céu estrelado */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #001a33 0%, #000a1a 100%);
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        /* Adicionando estrelas no espaço */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: twinkle linear infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Avião único voando */
+        .plane-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .plane {
+            position: absolute;
+            color: white;
+            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
+            animation: flyAcross 40s linear infinite;
+        }
+
+        @keyframes flyAcross {
+            0% {
+                opacity: 0;
+                transform: translate(-10%, 45%) scale(0.5) rotate(15deg);
+            }
+            10% {
+                opacity: 1;
+                transform: translate(10%, 40%) scale(0.7) rotate(10deg);
+            }
+            45% {
+                transform: translate(50%, 30%) scale(1.2) rotate(0deg);
+            }
+            80% {
+                opacity: 1;
+                transform: translate(90%, 40%) scale(0.7) rotate(-10deg);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(110%, 45%) scale(0.5) rotate(-15deg);
+            }
+        }
+
+        /* Container principal */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
-            color: #fff;
+            padding: 20px;
+        }
+
+        /* Logo e título */
+        .logo-container {
+            position: relative;
+            margin-bottom: 1.5rem;
+            z-index: 10;
         }
 
         .logo {
-            margin-bottom: 20px;
-        }
-
-        .logo img {
-            display: block;
-            width: 100px;
-            height: auto;
-        }
-
-        .title {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-
-        .button-container {
+            width: 120px;
+            height: 120px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 90%;
-            max-width: 400px;
-        }
-
-        .button {
-            text-align: center;
-            text-decoration: none;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #fff;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            background-color: #00b300;
-        }
-
-        .button:hover {
-            transform: scale(1.05);
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .button:nth-child(1) {
-            background-color: #007f00;
-        }
-
-        .button:nth-child(2) {
-            background-color: #00b300;
-        }
-
-        .button:nth-child(3) {
-            background-color: #ff5c5c;
+            align-items: center;
+            justify-content: center;
             position: relative;
         }
 
-        .button:nth-child(3) small {
-            display: block;
-            font-size: 0.8rem;
-            margin-top: 5px;
-            color: #fff;
+        .logo img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(0, 255, 150, 0.7));
+            animation: logoGlow 4s infinite ease-in-out;
         }
 
-        .button:nth-child(4) {
-            background-color: #ff9933;
+        @keyframes logoGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 15px rgba(0, 255, 150, 0.7));
+            }
+            50% { 
+                filter: drop-shadow(0 0 25px rgba(0, 255, 150, 0.9));
+            }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            opacity: 0.9;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Botões */
+        .buttons-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 18px 20px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            z-index: 1;
+            background-color: rgba(0, 59, 128, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            z-index: -1;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            border-radius: 40%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 60%);
+            transition: all 0.5s;
+            opacity: 0;
+            z-index: -1;
+        }
+
+        .button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .button:hover::after {
+            opacity: 1;
+            transform: scale(1.3) translateX(-20%) translateY(-10%);
+        }
+
+        .button:active {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .button-icon {
+            font-size: 1.6rem;
+            margin-right: 15px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
+        }
+
+        .button-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            flex-grow: 1;
+        }
+
+        .button-title {
+            font-size: 1.1rem;
+            margin-bottom: 3px;
+        }
+
+        .button-subtitle {
+            font-size: 0.8rem;
+            opacity: 0.9;
+            font-weight: normal;
+        }
+
+        .button-1 {
+            background-color: rgba(0, 127, 0, 0.7);
+        }
+
+        .button-2 {
+            background-color: rgba(230, 68, 68, 0.7);
+        }
+
+        .button-3 {
+            background-color: rgba(230, 126, 34, 0.7);
+        }
+
+        .button-4 {
+            background-color: rgba(0, 179, 0, 0.7);
+        }
+
+        /* Footer */
+        .footer {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 2rem;
+        }
+
+        /* Responsividade */
+        @media (min-width: 768px) {
+            .title {
+                font-size: 3.5rem;
+            }
+            
+            .buttons-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+                max-width: 700px;
+            }
+            
+            .button {
+                height: 100%;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                padding: 25px 15px;
+            }
+            
+            .button-icon {
+                margin-right: 0;
+                margin-bottom: 10px;
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .button-content {
+                align-items: center;
+            }
+            
+            .plane {
+                font-size: 2.5rem;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .logo {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+            
+            .button {
+                padding: 15px;
+            }
+            
+            .button-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.3rem;
+            }
+            
+            .plane {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="logo">
-        <img src="logo.png" alt="PassaBot Logo">
+    <!-- Fundo estrelado com avião -->
+    <div class="bg-container">
+        <div class="stars"></div>
+        <div class="plane-container">
+            <div class="plane">
+                <i class="fas fa-plane"></i>
+            </div>
+        </div>
     </div>
-    <div class="title">PASSABOT</div>
-    <div class="button-container">
-        <a href="https://wa.me/5511944626696" class="button">Comprar Passagens ✈️</a>
-        <a href="https://www.passabot.com/" class="button">Nosso Site 💚</a>
-        <a href="https://chat.whatsapp.com/GsddcdAqx1WCAYjQXLAr5Q" class="button">Grupo de Alertas 🚨<small>Passagens baratas saindo de <b>São Paulo</b></small></a>
-        <a href="https://wa.me/5587988574866" class="button">Falar com Assessor 🗓️</a>
+    
+    <!-- Conteúdo principal -->
+    <div class="container">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="logo.png" alt="PassaBot Logo">
+            </div>
+        </div>
+        
+        <h1 class="title">PASSABOT</h1>
+        <p class="subtitle">Sua passagem para o mundo.</p>
+        
+        <div class="buttons-container">
+            <a href="https://wa.me/5511944626696" class="button button-1">
+                <div class="button-icon">
+                    <i class="fas fa-plane-departure"></i>
+                </div>
+                <div class="button-content">
+                    <div class="button-title">Comprar Passagens</div>
+                    <div class="button-subtitle">Fale com a Passabot - Cotação rápida</div>
+                </div>
+            </a>
+            
+            <a href="https://chat.whatsapp.com/GsddcdAqx1WCAYjQXLAr5Q" class="button button-2">
+                <div class="button-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="button-content">
+                    <div class="button-title">Grupo de Alertas</div>
+                    <div class="button-subtitle">Passagens baratas saindo de São Paulo</div>
+                </div>
+            </a>
+            
+            <a href="https://wa.me/5587988574866" class="button button-3">
+                <div class="button-icon">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="button-content">
+                    <div class="button-title">Falar com Assessor</div>
+                    <div class="button-subtitle">Atendimento personalizado</div>
+                </div>
+            </a>
+            
+            <a href="https://www.passabot.com/" class="button button-4">
+                <div class="button-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="button-content">
+                    <div class="button-title">Nosso Site</div>
+                    <div class="button-subtitle">Conheça mais sobre nós</div>
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            &copy; 2025 PassaBot - Todos os direitos reservados
+        </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Criar estrelas no fundo
+            const stars = document.querySelector('.stars');
+            for (let i = 0; i < 150; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Tamanho aleatório
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                
+                // Posição aleatória
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                
+                // Animação com duração e delay aleatórios
+                const duration = Math.random() * 5 + 2;
+                star.style.animationDuration = `${duration}s`;
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                
+                stars.appendChild(star);
+            }
+            
+            // Ajustar o tamanho do avião com base no dispositivo
+            function adjustPlaneSize() {
+                const isMobile = window.innerWidth < 768;
+                const plane = document.querySelector('.plane');
+                plane.style.fontSize = isMobile ? '1.5rem' : '2.5rem';
+            }
+            
+            // Verificar ao carregar e ao redimensionar
+            adjustPlaneSize();
+            window.addEventListener('resize', adjustPlaneSize);
+        });
+    </script>
 </body>
 </html>
