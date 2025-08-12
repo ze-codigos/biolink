@@ -64,44 +64,69 @@
             50% { opacity: 0.7; }
         }
 
-        /* Avião único voando */
-        .plane-container {
+        /* Animação curta: avião orbitando a logo */
+        .logo-container { position: relative; }
+        .logo-orbit {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 50%;
+            left: 50%;
+            width: 180px;
+            height: 180px;
+            transform: translate(-50%, -50%);
             pointer-events: none;
-            z-index: 1;
+            display: none;
         }
+        .logo-container.animate-orbit .logo-orbit { display: block; animation: orbit-rotate 1.6s cubic-bezier(.2,.8,.2,1) both; }
 
-        .plane {
+        .orbit-trail {
             position: absolute;
-            color: white;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.8));
-            animation: flyAcross 40s linear infinite;
+            inset: 0;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, rgba(255,221,68,0.9), rgba(255,221,68,0) 35%, rgba(255,221,68,0) 100%);
+            filter: drop-shadow(0 0 12px rgba(255,221,68,0.7));
+            opacity: 0;
+            animation: trail-fade 1.6s ease-out forwards;
         }
 
-        @keyframes flyAcross {
-            0% {
-                opacity: 0;
-                transform: translate(-10%, 45%) scale(0.5) rotate(15deg);
-            }
-            10% {
-                opacity: 1;
-                transform: translate(10%, 40%) scale(0.7) rotate(10deg);
-            }
-            45% {
-                transform: translate(50%, 30%) scale(1.2) rotate(0deg);
-            }
-            80% {
-                opacity: 1;
-                transform: translate(90%, 40%) scale(0.7) rotate(-10deg);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(110%, 45%) scale(0.5) rotate(-15deg);
-            }
+        .orbit-plane {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: rotate(0deg) translate(90px) rotate(90deg);
+            color: #ffdd44;
+            text-shadow: 0 0 8px rgba(255,221,68,0.8);
+            filter: drop-shadow(0 0 8px rgba(255,221,68,0.8));
+            font-size: 1.6rem;
+            opacity: 0.95;
+        }
+
+        @keyframes orbit-rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(1); }
+            80% { transform: translate(-50%, -50%) rotate(360deg) scale(1); }
+            100% { transform: translate(-50%, -50%) rotate(380deg) scale(0.98); }
+        }
+
+        @keyframes trail-fade {
+            0% { opacity: 1; }
+            70% { opacity: 0.8; filter: drop-shadow(0 0 16px rgba(255,221,68,0.9)); }
+            100% { opacity: 0; filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+        }
+
+        /* Pulso breve na logo ao final da órbita */
+        .logo-container.animate-orbit .logo img {
+            animation: logoGlow 4s infinite ease-in-out, logoPulse 0.7s ease-out 0.9s 1;
+        }
+        @keyframes logoPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(0,255,150,0.7)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 0 30px rgba(255,221,68,0.95)); }
+            100% { transform: scale(1); }
+        }
+
+        /* Removido avião branco de fundo */
+
+        /* Respeitar reduzido de movimento */
+        @media (prefers-reduced-motion: reduce) {
+            * { animation: none !important; transition: none !important; }
         }
 
         /* Container principal */
@@ -286,6 +311,74 @@
             background-color: rgba(0, 179, 0, 0.7);
         }
 
+        /* Modal de seleção de região */
+        .region-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(2px);
+        }
+        .region-modal {
+            width: min(92vw, 560px);
+            background: rgba(0, 59, 128, 0.9);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            overflow: hidden;
+            animation: modalIn .22s ease-out both;
+        }
+        @keyframes modalIn { from { transform: translateY(8px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .region-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.06);
+        }
+        .region-header h2 { font-size: 1.1rem; }
+        .region-close {
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            opacity: 0.9;
+        }
+        .region-close:hover { opacity: 1; }
+
+        .region-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            padding: 14px;
+        }
+        .region-card {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(0,0,0,0.18);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 12px;
+            color: #fff;
+            text-decoration: none;
+            transition: transform .15s ease, background .15s ease;
+        }
+        .region-card i { opacity: 0.9; }
+        .region-card:hover { transform: translateY(-2px); background: rgba(0,0,0,0.26); }
+        .region-title { font-weight: 700; }
+        .region-subtitle { font-size: .85rem; opacity: .9; }
+
+        @media (min-width: 560px) {
+            .region-grid { grid-template-columns: 1fr; }
+        }
+
         /* Footer */
         .footer {
             position: relative;
@@ -360,28 +453,27 @@
                 font-size: 1.3rem;
             }
             
-            .plane {
-                font-size: 1.5rem;
-            }
+            .plane { font-size: 1.5rem; }
+            .logo-orbit { width: 150px; height: 150px; }
+            .orbit-plane { font-size: 1.3rem; transform: rotate(0deg) translate(75px) rotate(90deg); }
         }
     </style>
 </head>
 <body>
-    <!-- Fundo estrelado com avião -->
+    <!-- Fundo estrelado -->
     <div class="bg-container">
         <div class="stars"></div>
-        <div class="plane-container">
-            <div class="plane">
-                <i class="fas fa-plane"></i>
-            </div>
-        </div>
     </div>
     
     <!-- Conteúdo principal -->
     <div class="container">
-        <div class="logo-container">
+        <div class="logo-container" id="logoContainer">
             <div class="logo">
                 <img src="logo.png" alt="PassaBot Logo">
+            </div>
+            <div class="logo-orbit" aria-hidden="true">
+                <div class="orbit-trail"></div>
+                <div class="orbit-plane"><i class="fas fa-plane"></i></div>
             </div>
         </div>
         
@@ -399,13 +491,13 @@
                 </div>
             </a>
             
-            <a href="https://chat.whatsapp.com/HI3VM4VfqMN253mrGhraXj" class="button button-2">
+            <a href="#" id="openRegionModal" class="button button-2">
                 <div class="button-icon">
                     <i class="fas fa-bell"></i>
                 </div>
                 <div class="button-content">
                     <div class="button-title">Grupo de Alertas</div>
-                    <div class="button-subtitle">Passagens baratas saindo de São Paulo</div>
+                    <div class="button-subtitle">Passagens baratas saindo da sua região</div>
                 </div>
             </a>
             
@@ -435,8 +527,81 @@
         </div>
     </div>
     
+    <!-- Modal de seleção de região -->
+    <div class="region-modal-overlay" id="regionModal" aria-hidden="true" style="display:none;">
+        <div class="region-modal" role="dialog" aria-modal="true" aria-labelledby="regionTitle">
+            <div class="region-header">
+                <h2 id="regionTitle">Escolha sua cidade</h2>
+                <button class="region-close" id="closeRegionModal" aria-label="Fechar">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="region-grid">
+                <a class="region-card sp" href="https://chat.whatsapp.com/HI3VM4VfqMN253mrGhraXj" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-city"></i>
+                    <div>
+                        <div class="region-title">São Paulo</div>
+                        <div class="region-subtitle">Passagens baratas | SP</div>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a class="region-card rj" href="https://chat.whatsapp.com/JRsbzuC5U45Gd55olvESyL" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <div>
+                        <div class="region-title">Rio de Janeiro</div>
+                        <div class="region-subtitle">Passagens baratas | RIO</div>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a class="region-card pnz" href="https://chat.whatsapp.com/GzZ7dKSjgvK86Ud8USPFFs" target="_blank" rel="noopener noreferrer">
+                    <i class="fas fa-sun"></i>
+                    <div>
+                        <div class="region-title">Petrolina</div>
+                        <div class="region-subtitle">Passagens baratas | PNZ</div>
+                    </div>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Disparar órbita curta na logo sem bloquear conteúdo
+            const logoContainer = document.getElementById('logoContainer');
+            if (logoContainer) {
+                // pequena espera para garantir que fontes/ícones carregaram
+                setTimeout(() => logoContainer.classList.add('animate-orbit'), 200);
+                // remover a classe após animação para não repetir
+                setTimeout(() => logoContainer.classList.remove('animate-orbit'), 2200);
+            }
+
+            // Modal de seleção de região
+            const openRegionModalBtn = document.getElementById('openRegionModal');
+            const regionModal = document.getElementById('regionModal');
+            const closeRegionModalBtn = document.getElementById('closeRegionModal');
+            const modalOverlay = regionModal;
+
+            function openRegionModal() {
+                regionModal.style.display = 'flex';
+                regionModal.setAttribute('aria-hidden', 'false');
+            }
+            function closeRegionModal() {
+                regionModal.style.display = 'none';
+                regionModal.setAttribute('aria-hidden', 'true');
+            }
+
+            if (openRegionModalBtn && regionModal && closeRegionModalBtn) {
+                openRegionModalBtn.addEventListener('click', (e) => { e.preventDefault(); openRegionModal(); });
+                closeRegionModalBtn.addEventListener('click', closeRegionModal);
+                modalOverlay.addEventListener('click', (e) => {
+                    if (e.target === modalOverlay) closeRegionModal();
+                });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && regionModal.style.display !== 'none') closeRegionModal();
+                });
+            }
+
             // Criar estrelas no fundo
             const stars = document.querySelector('.stars');
             for (let i = 0; i < 150; i++) {
@@ -464,7 +629,9 @@
             function adjustPlaneSize() {
                 const isMobile = window.innerWidth < 768;
                 const plane = document.querySelector('.plane');
-                plane.style.fontSize = isMobile ? '1.5rem' : '2.5rem';
+                if (plane) {
+                    plane.style.fontSize = isMobile ? '1.5rem' : '2.5rem';
+                }
             }
             
             // Verificar ao carregar e ao redimensionar
