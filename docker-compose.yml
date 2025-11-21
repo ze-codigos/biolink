@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: passabot-biolink
-    restart: unless-stopped
+    restart: restart-always
     networks:
       - passabot_network
 networks:
