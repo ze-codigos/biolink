@@ -4,13 +4,9 @@ on:
   push:
     branches:
       - main
-      - dev
 
 env:
-  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
   CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
-  CGP_PRIVATE_KEY_DEV: ${{ secrets.CGP_PRIVATE_KEY_DEV }}
 
 jobs:
   build:
@@ -30,26 +26,16 @@ jobs:
 
       - name: Set permissions for private key
         run: |
-          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
-            printf '%s\n' "$CGP_PRIVATE_KEY_DEV" > private-key.pem
-          else
-            printf '%s\n' "$CGP_PRIVATE_KEY" > private-key.pem
-          fi
+          printf '%s\n' "$CGP_PRIVATE_KEY" > private-key.pem
           chmod 600 private-key.pem
         env:
           CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
-          CGP_PRIVATE_KEY_DEV: ${{ secrets.CGP_PRIVATE_KEY_DEV }}
 
       - name: Git Pull e Docker compose
         run: |
           ssh_user=root
-          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
-            ip_address=35.196.116.28
-            branch=dev
-          else
-            ip_address=34.68.95.239
-            branch=main
-          fi
+          ip_address=34.68.95.239
+          branch=main
 
           ssh -o StrictHostKeyChecking=no -i private-key.pem $ssh_user@$ip_address "
             cd github/biolink
