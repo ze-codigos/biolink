@@ -27,6 +27,6 @@ jobs:
 
       - name: Sync build folder to S3
         run: |
-          aws s3 sync ./ s3://links.passabot.com --delete --exclude ".git/*"
+          aws s3 sync ./ s3://links.passabot.com.br --delete --exclude ".git/*"
 
 
