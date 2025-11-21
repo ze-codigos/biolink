@@ -40,7 +40,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no -i private-key.pem $ssh_user@$ip_address "
             cd github/biolink
             git pull origin $branch
-            docker compose up --build -d
+            docker compose up -d --build
             "
 
             
