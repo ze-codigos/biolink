@@ -6,7 +6,7 @@ on:
       - main
 
 env:
-  CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
+  GCP_PRIVATE_KEY: ${{ secrets.GCP_PRIVATE_KEY }}
 
 jobs:
   build:
@@ -26,10 +26,10 @@ jobs:
 
       - name: Set permissions for private key
         run: |
-          printf '%s\n' "$CGP_PRIVATE_KEY" > private-key.pem
+          printf '%s\n' "$GCP_PRIVATE_KEY" > private-key.pem
           chmod 600 private-key.pem
         env:
-          CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
+          GCP_PRIVATE_KEY: ${{ secrets.GCP_PRIVATE_KEY }}
 
       - name: Git Pull e Docker compose
         run: |
