@@ -6,13 +6,9 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: passabot-biolink
-    ports:
-      - "8080:8080"
     restart: unless-stopped
     networks:
-      - biolink-network
-
+      - passabot_network
 networks:
-  biolink-network:
-    driver: bridge
-
+  passabot_network:
+    external: true
