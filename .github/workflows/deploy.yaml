@@ -1,32 +1,60 @@
-name: Deploy to S3
+name: Build on DockerHub and Deploy to AWS
 
 on:
   push:
     branches:
       - main
+      - dev
+
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
+  CGP_PRIVATE_KEY_DEV: ${{ secrets.CGP_PRIVATE_KEY_DEV }}
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
-   
-      - name: Set up AWS CLI
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set permissions for private key
         run: |
-          curl "https://d1vvhvl2y92vvt.cloudfront.net/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-          unzip awscliv2.zip
-          sudo ./aws/install --update
+          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+            printf '%s\n' "$CGP_PRIVATE_KEY_DEV" > private-key.pem
+          else
+            printf '%s\n' "$CGP_PRIVATE_KEY" > private-key.pem
+          fi
+          chmod 600 private-key.pem
+        env:
+          CGP_PRIVATE_KEY: ${{ secrets.CGP_PRIVATE_KEY }}
+          CGP_PRIVATE_KEY_DEV: ${{ secrets.CGP_PRIVATE_KEY_DEV }}
 
-      - name: Configure AWS credentials
+      - name: Git Pull e Docker compose
         run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set default.region us-east-1
+          ssh_user=root
+          if [[ "${GITHUB_REF}" == "refs/heads/dev" ]]; then
+            ip_address=35.196.116.28
+            branch=dev
+          else
+            ip_address=34.68.95.239
+            branch=main
+          fi
 
-      - name: Sync build folder to S3
-        run: |
-          aws s3 sync ./ s3://links.passabot.com.br --delete --exclude ".git/*"
+          ssh -o StrictHostKeyChecking=no -i private-key.pem $ssh_user@$ip_address "
+            cd github/biolink
+            git pull origin $branch
+            docker compose up --build -d
+            "
 
-
+            

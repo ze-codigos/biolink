@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  biolink:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: passabot-biolink
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - biolink-network
+
+networks:
+  biolink-network:
+    driver: bridge
+
